@@ -1,0 +1,4 @@
+iptables -A INPUT -s 195.216.46.27 -j DROP
+iptables -A INPUT -s 195.216.46.27 -j DROP
+iptables -A INPUT -s 195.216.46.27 -j DROP
+iptables -A INPUT -s 195.216.46.27 -j DROP

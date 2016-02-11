@@ -1,0 +1,80 @@
+10
+
+dir
+41
+http://mail.andrix.se/svn/repos/andrix/images/jpgraph
+http://mail.andrix.se/svn/repos
+
+
+
+2012-11-13T14:13:50.603686Z
+8
+anderss
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+b4b40ece-1f9f-473d-8063-ef2318f42a95
+
+Thumbs.db
+file
+
+
+
+
+2012-11-13T16:45:35.448000Z
+82c909a228ba8629c53a12a17b6cc089
+2012-11-13T14:13:50.603686Z
+8
+anderss
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+56320
+
+day
+dir
+
+energiday
+dir
+
+energihour
+dir
+
+energimonth
+dir
+
+hour
+dir
+
+month
+dir
+

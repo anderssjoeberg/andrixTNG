@@ -1,0 +1,180 @@
+<?php
+
+//include("/var/www/andrix/system/includes/system_include.php");
+
+include("/var/www/andrix/includes/jpgraph/jpgraph.php");
+include("/var/www/andrix/includes/jpgraph/jpgraph_line.php");
+
+	$dag=date("d");
+		$manad=date("m");
+		$year=date("Y");	
+		$timme=date("H");
+		$minut=date("i");
+	
+	$timme=$timme-1;
+	if ($timme=='0') {
+		$timme='23';
+	}
+	
+	$manad=$manad-1;
+	if ($manad=='0') {
+		$manad='12';
+	   	$year=$year-1;
+	}
+
+function drawdiagram($ydata,$namn,$file)
+{
+	$graph = new Graph(700,300);
+	$graph->SetScale("textlin");
+	$lineplot=new LinePlot($ydata);
+	$lineplot->SetColor('blue');
+	$graph->title->Set($namn);
+
+	$graph->Add($lineplot);
+	$gdImgHandler = $graph->Stroke(_IMG_HANDLER);
+	$fileName = "/var/www/andrix/images/jpgraph/$file.png";
+	$graph->img->Stream($fileName);
+
+	//$graph->img->Headers();
+	//$graph->img->Stream();
+}	
+	
+	
+	$con = mysql_connect("localhost","root","f0ndr132t");
+	mysql_select_db("andrix", $con) or die( 'Databasfel !!! ' . mysql_error());
+
+
+$result=mysql_query("Select * from 1wire");
+$num=mysql_num_rows($result);
+
+$a=0;
+
+while ($a < $num) {
+	$b=0;
+	$sokvag=mysql_result($result,$a,"sokvag");
+	$namn=mysql_result($result,$a,"namn");
+
+
+	$result2=mysql_query("SELECT * FROM mesure where sensor='$sokvag'");
+	$num2=mysql_numrows($result2);
+
+	$sensor = substr($sokvag,11);
+	$sensor = str_replace("/", "_", $sensor);
+
+	$ydata = array();
+
+	while ($b < $num2) {
+		$value=mysql_result($result2,$b,"value");
+		$ydata[$b]=$value;
+		$b++;
+	}
+	
+	
+	
+	$con = mysql_connect("localhost","root","f0ndr132t");
+	mysql_select_db("andrix", $con) or die( 'Databasfel !!! ' . mysql_error());
+
+
+$result=mysql_query("Select * from 1wire");
+$num=mysql_num_rows($result);
+
+$a=0;
+
+while ($a < $num) {
+	$b=0;
+	$sokvag=mysql_result($result,$a,"sokvag");
+	$namn=mysql_result($result,$a,"namn");
+
+
+	$result2=mysql_query("SELECT * FROM mesure where sensor='$sokvag' AND dag='$dag'");
+	$num2=mysql_numrows($result2);
+
+	$sensor = substr($sokvag,11);
+	$sensor = str_replace("/", "_", $sensor);
+
+	$ydata = array();
+
+	while ($b < $num2) {
+		$value=mysql_result($result2,$b,"value");
+		$ydata[$b]=$value;
+		$b++;
+	}
+
+$file='$sensor_$year-$manad-$dag';
+	
+	
+	$graph = new Graph(700,300);
+	$graph->SetScale("textlin");
+	$lineplot=new LinePlot($ydata);
+	$lineplot->SetColor('blue');
+	$graph->title->Set($namn);
+
+	$graph->Add($lineplot);
+	$gdImgHandler = $graph->Stroke(_IMG_HANDLER);
+	$fileName = "/var/www/andrix/images/jpgraph/day/$file.png";
+	$graph->img->Stream($fileName);
+
+	//$graph->img->Headers();
+	//$graph->img->Stream();
+	$a++;
+
+}
+	$result=mysql_query("SELECT * FROM mesure where sensor='energi' order by id ASC");
+	$num=mysql_numrows($result);
+
+	$namn="Energi förbrukning kwh";
+	$file="energikwh";
+	
+	$ydata = array();
+	$c=0;
+	while ($c < $num) {
+		$value=mysql_result($result,$c,"value");
+		$ydata[$c]=$value;
+		$c++;
+	}
+drawdiagram($ydata, $namn, $file);
+
+
+
+
+
+
+
+
+if($_GET["status"] == "energitimme") {
+
+	$result=mysql_query("SELECT * FROM mesure where sensor='energi' AND timme='$timme' order by id ASC");
+	$num=mysql_numrows($result);
+
+	$namn="Energi förbrukning föregående timme kwh";
+	$file="energitimmekwh";
+	
+	$ydata = array();
+	$c=0;
+	while ($c < $num) {
+		$value=mysql_result($result,$c,"value");
+		$ydata[$c]=$value;
+		$c++;
+	}
+drawdiagram($ydata, $namn, $file);
+}
+
+if($_GET["status"] == "energimanad") {
+$result=mysql_query("SELECT * FROM mesure where sensor='energi' where manad='$manad' order by id ASC");
+$num=mysql_numrows($result);
+
+
+	$namn="Energi förbrukning föregående månad kwh";
+	$file="energmanadkwh";
+
+	$ydata = array();
+$c=0;
+	while ($c < $num) {
+		$value=mysql_result($result,$c,"value");
+		$ydata[$c]=$value;
+		$c++;
+	}
+drawdiagram($ydata, $namn, $file);	
+	}
+
+	?>
